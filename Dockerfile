@@ -10,7 +10,6 @@ LABEL contact="contato@evolution-api.com"
 WORKDIR /evolution
 
 COPY ./package.json ./tsconfig.json ./
-
 RUN npm install
 
 COPY ./src ./src
@@ -20,7 +19,6 @@ COPY ./manager ./manager
 COPY ./.env.example ./.env
 COPY ./runWithProvider.js ./
 COPY ./tsup.config.ts ./
-
 COPY ./Docker ./Docker
 
 RUN chmod +x ./Docker/scripts/* && dos2unix ./Docker/scripts/*
@@ -29,18 +27,21 @@ RUN ./Docker/scripts/generate_database.sh
 
 RUN npm run build
 
+# FINAL STAGE
 FROM node:20-alpine AS final
 
 RUN apk update && \
     apk add tzdata ffmpeg bash openssl
 
 ENV TZ=America/Sao_Paulo
-
 WORKDIR /evolution
 
+# ✅ Copy package.json first, then install PM2 globally
 COPY --from=builder /evolution/package.json ./package.json
 COPY --from=builder /evolution/package-lock.json ./package-lock.json
+RUN npm install -g pm2
 
+# ✅ Copy project files
 COPY --from=builder /evolution/node_modules ./node_modules
 COPY --from=builder /evolution/dist ./dist
 COPY --from=builder /evolution/prisma ./prisma
@@ -50,13 +51,10 @@ COPY --from=builder /evolution/.env ./.env
 COPY --from=builder /evolution/Docker ./Docker
 COPY --from=builder /evolution/runWithProvider.js ./runWithProvider.js
 COPY --from=builder /evolution/tsup.config.ts ./tsup.config.ts
-
-ENV DOCKER_ENV=true
-
-EXPOSE 8080
-
-RUN npm install -g pm2
-
 COPY ecosystem.config.js ./ecosystem.config.js
 
+ENV DOCKER_ENV=true
+EXPOSE 8080
+
+# ✅ Final command using PM2
 ENTRYPOINT ["/bin/bash", "-c", ". ./Docker/scripts/deploy_database.sh && pm2-runtime ecosystem.config.js" ]
