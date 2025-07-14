@@ -23,7 +23,7 @@ services:
       - evolution-net
     container_name: redis
     command: >
-      redis-server --port 6379 --appendonly yes
+      redis-server --port 6379 --appendonly yes --replicaof no one
     volumes:
       - evolution_redis:/data
     ports:
