@@ -2,7 +2,7 @@
 module.exports = {
     apps: [
         {
-            name: "olimi-whatsapp-api",
+            name: "evolution-api",
             script: "dist/main.js",
             instances: 1, // you can set to "max" for cluster mode if CPU-bound
             exec_mode: "fork",
