@@ -1618,12 +1618,6 @@ export class BaileysStartupService extends ChannelStartupService {
 
         if (events['messages.upsert']) {
           const payload = events['messages.upsert'];
-          for (const msg of payload.messages) {
-            if (msg.message?.pollUpdateMessage) {
-              console.log('✅ Poll vote received:', msg.message.pollUpdateMessage);
-            }
-          }
-
           this.messageHandle['messages.upsert'](payload, settings);
         }
 
