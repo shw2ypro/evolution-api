@@ -1387,6 +1387,8 @@ export class BaileysStartupService extends ChannelStartupService {
           }
         }
 
+        console.log('key.remoteJid: ' + key.remoteJid)
+        console.log('update: ' + update)
         if (key.remoteJid !== 'status@broadcast' && key.id !== undefined) {
           let pollUpdates: any;
 
