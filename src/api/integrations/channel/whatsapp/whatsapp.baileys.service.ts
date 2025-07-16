@@ -1104,7 +1104,6 @@ export class BaileysStartupService extends ChannelStartupService {
           if (
             (type !== 'notify' && type !== 'append') ||
             received.message?.protocolMessage ||
-            received.message?.pollUpdateMessage ||
             !received?.message
           ) {
             continue;
